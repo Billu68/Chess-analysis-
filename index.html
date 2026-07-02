@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium chess game analysis platform with interactive board, evaluation graphs, and detailed move explanations.">
+    <meta name="theme-color" content="#1e1f22">
+    <title>ChessMaster Pro - Premium Game Analysis</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div id="app" class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="logo">♔ ChessMaster</h1>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon" id="themeToggle" aria-label="Toggle theme">
+                        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="settingsBtn" aria-label="Settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Left Panel - Chessboard -->
+            <main class="board-panel">
+                <div class="board-wrapper">
+                    <div id="chessboard" class="chessboard"></div>
+                    <div class="board-overlay">
+                        <div class="coordinates-h"></div>
+                        <div class="coordinates-v"></div>
+                    </div>
+                </div>
+
+                <!-- Move Arrows Canvas -->
+                <canvas id="arrowCanvas" class="arrow-canvas"></canvas>
+
+                <!-- Board Controls -->
+                <div class="board-controls">
+                    <button class="control-btn" id="flipBoardBtn" title="Flip Board [F]">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="fullscreenBtn" title="Fullscreen [Ctrl+Shift+F]">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="navigation-controls">
+                    <button class="nav-btn" id="firstBtn" title="First Move [Home]">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path>
+                        </svg>
+                    </button>
+                    <button class="nav-btn" id="prevBtn" title="Previous [←]">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
+                        </svg>
+                    </button>
+                    <button class="nav-btn play-btn" id="playBtn" title="Play [Space]">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                    </button>
+                    <button class="nav-btn pause-btn hidden" id="pauseBtn" title="Pause [Space]">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path>
+                        </svg>
+                    </button>
+                    <button class="nav-btn" id="nextBtn" title="Next [→]">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                        </svg>
+                    </button>
+                    <button class="nav-btn" id="lastBtn" title="Last Move [End]">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 18h2V6h-2zm-11-7l8.5-6v12z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Move Counter -->
+                <div class="move-counter">
+                    <span id="moveNumber">Move 0/0</span>
+                </div>
+            </main>
+
+            <!-- Right Panel - Analysis -->
+            <aside class="analysis-panel">
+                <!-- Game Header -->
+                <div class="game-header">
+                    <h2 class="game-title">Game Review</h2>
+                    <div class="players-info">
+                        <div class="player white-player">
+                            <img src="https://images.chesscomfiles.com/uploads/v1/user/72801982.0ee8ce8b.160x160o.png" alt="White Player" class="player-avatar">
+                            <div class="player-details">
+                                <div class="player-name">Magnus Carlsen</div>
+                                <div class="player-rating">2883</div>
+                            </div>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="player black-player">
+                            <div class="player-details">
+                                <div class="player-name">Fabiano Caruana</div>
+                                <div class="player-rating">2820</div>
+                            </div>
+                            <img src="https://images.chesscomfiles.com/uploads/v1/user/65437938.eb9a2b76.160x160o.png" alt="Black Player" class="player-avatar">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accuracy Section -->
+                <div class="accuracy-section">
+                    <div class="accuracy-card">
+                        <div class="accuracy-label">White Accuracy</div>
+                        <div class="accuracy-value">70.9%</div>
+                        <div class="accuracy-bar">
+                            <div class="accuracy-fill" style="width: 70.9%;"></div>
+                        </div>
+                    </div>
+                    <div class="accuracy-card">
+                        <div class="accuracy-label">Black Accuracy</div>
+                        <div class="accuracy-value">75.9%</div>
+                        <div class="accuracy-bar">
+                            <div class="accuracy-fill" style="width: 75.9%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluation Graph -->
+                <div class="graph-section">
+                    <div class="section-header">
+                        <h3>Evaluation</h3>
+                        <button class="btn-secondary" id="graphModeBtn">Line</button>
+                    </div>
+                    <div id="evaluationGraph" class="evaluation-graph">
+                        <svg id="graphSvg" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <linearGradient id="whiteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+                                    <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+                                </linearGradient>
+                                <linearGradient id="blackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#000000;stop-opacity:0.3" />
+                                    <stop offset="100%" style="stop-color:#000000;stop-opacity:0.05" />
+                                </linearGradient>
+                            </defs>
+                            <line x1="0" y1="100" x2="600" y2="100" stroke="#b5bac1" stroke-width="1" opacity="0.2"/>
+                            <polyline id="evaluationLine" points="" fill="none" stroke="#3ea6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline id="evaluationFill" points="" fill="url(#whiteGrad)" opacity="0"/>
+                        </svg>
+                    </div>
+                    <div class="graph-tooltip" id="graphTooltip" style="display: none;">
+                        <div class="tooltip-move" id="tooltipMove"></div>
+                        <div class="tooltip-eval" id="tooltipEval"></div>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="stats-section">
+                    <div class="section-header">
+                        <h3>Move Statistics</h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Brilliant</div>
+                            <div class="stat-value">2</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Great</div>
+                            <div class="stat-value">5</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Best</div>
+                            <div class="stat-value">8</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Good</div>
+                            <div class="stat-value">12</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Inaccuracy</div>
+                            <div class="stat-value">3</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Mistake</div>
+                            <div class="stat-value">2</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Blunder</div>
+                            <div class="stat-value">1</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">ACL</div>
+                            <div class="stat-value">25</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scrollable Area for Move Details -->
+                <div class="analysis-scroll">
+                    <!-- Move Explanation Card -->
+                    <div class="move-explanation">
+                        <div class="move-header">
+                            <div class="move-number">Move 1</div>
+                            <div class="move-played">e2-e4</div>
+                            <div class="move-eval">+0.35</div>
+                        </div>
+                        <div class="move-assessment excellent">
+                            <span class="badge-icon">✔</span>
+                            <span>Best Move</span>
+                        </div>
+                        <div class="move-explanation-text">
+                            <p><strong>Why it's excellent:</strong> The King's Pawn opening is the classical and most popular opening for White. It controls the center immediately and opens lines for your queen and bishop.</p>
+                            <p><strong>Strategic value:</strong> Dominates central squares while allowing your pieces to develop actively.</p>
+                        </div>
+                        <div class="alternative-moves">
+                            <div class="alt-header">Alternative moves:</div>
+                            <div class="alt-move">
+                                <span>d2-d4</span>
+                                <span class="eval">+0.33</span>
+                            </div>
+                            <div class="alt-move">
+                                <span>c2-c4</span>
+                                <span class="eval">+0.28</span>
+                            </div>
+                        </div>
+                        <div class="move-actions">
+                            <button class="btn-action">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Best Move
+                            </button>
+                            <button class="btn-action secondary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                </svg>
+                                Engine
+                            </button>
+                            <button class="btn-action secondary">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+                                </svg>
+                                Analyze
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Move List -->
+                    <div class="move-list-section">
+                        <div class="section-header">
+                            <h3>Move List</h3>
+                        </div>
+                        <div id="moveList" class="move-list">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="btn-close" id="closeSettingsBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <label class="setting-label">
+                            <span>Show Coordinates</span>
+                            <input type="checkbox" id="showCoordinates" checked>
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label class="setting-label">
+                            <span>Animate Moves</span>
+                            <input type="checkbox" id="animateMoves" checked>
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label class="setting-label">
+                            <span>Sound Effects</span>
+                            <input type="checkbox" id="soundEffects" checked>
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label class="setting-label">
+                            <span>Show Move Arrows</span>
+                            <input type="checkbox" id="showArrows" checked>
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label class="setting-label">
+                            <span>Board Size</span>
+                            <input type="range" id="boardSize" min="400" max="800" value="600" step="20">
+                            <span id="boardSizeValue">600px</span>
+                        </label>
+                    </div>
+                    <div class="settings-group">
+                        <label class="setting-label">
+                            <span>Engine Depth</span>
+                            <select id="engineDepth">
+                                <option value="10">10</option>
+                                <option value="15" selected>15</option>
+                                <option value="20">20</option>
+                                <option value="25">25</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" id="applySettingsBtn">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/board/board.js"></script>
+    <script src="js/board/pieces.js"></script>
+    <script src="js/board/moves.js"></script>
+    <script src="js/analysis/analysis.js"></script>
+    <script src="js/ui/ui.js"></script>
+    <script src="js/ui/controls.js"></script>
+    <script src="js/ui/graph.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
